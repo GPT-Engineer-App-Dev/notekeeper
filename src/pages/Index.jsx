@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Button, Container, Flex, Input, Text, Textarea, useColorModeValue, VStack } from '@chakra-ui/react';
+import { Box, Button, Container, Flex, Input, Link, Text, Textarea, useColorModeValue, VStack } from '@chakra-ui/react';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 
 const Note = ({ note, onDelete, onEdit }) => {
@@ -56,6 +56,10 @@ const Index = () => {
           <Note key={note.id} note={note} onDelete={deleteNote} onEdit={() => {}} />
         ))}
       </VStack>
+      <Box as="footer" py={4} mt={10} textAlign="center" borderTopWidth="1px">
+        <Text fontSize="sm">© 2023 Note App, Inc.</Text>
+        <Link href="/privacy-policy" color="blue.500" fontSize="sm">Privacy Policy</Link>
+      </Box>
     </Container>
   );
 };
