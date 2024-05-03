@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Box, Button, Container, Flex, Input, Link, Text, Textarea, useColorModeValue, VStack, Tag, TagLabel, TagCloseButton, IconButton } from '@chakra-ui/react';
 import { FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
-import { ColorPicker } from '@chakra-ui/react';
 
 const Note = ({ note, onDelete, onEdit, onColorChange, onAddTag, onRemoveTag }) => {
   return (
@@ -16,11 +15,7 @@ const Note = ({ note, onDelete, onEdit, onColorChange, onAddTag, onRemoveTag }) 
         </Flex>
       </Flex>
       <Textarea defaultValue={note.content} isReadOnly={!note.isEditing} mt={4} />
-      <ColorPicker
-        value={note.color}
-        onChange={(newColor) => onColorChange(note.id, newColor)}
-        mt={4}
-      />
+      <Input type="color" value={note.color} onChange={(e) => onColorChange(note.id, e.target.value)} mt={4} />
       <Flex mt={4}>
         {note.tags.map((tag, index) => (
           <Tag size="lg" key={index} borderRadius="full">
