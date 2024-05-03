@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Box, Button, Container, Flex, Input, Link, Text, Textarea, useColorModeValue, VStack, Tag, TagLabel, TagCloseButton } from '@chakra-ui/react';
-import { FaPlus, FaTrash } from 'react-icons/fa';
-import { EditIcon } from '@chakra-ui/icons';
+import { Box, Button, Container, Flex, Input, Link, Text, Textarea, useColorModeValue, VStack, Tag, TagLabel, TagCloseButton, IconButton } from '@chakra-ui/react';
+import { FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
 import { ColorPicker } from '@chakra-ui/react';
 
 const Note = ({ note, onDelete, onEdit, onColorChange, onAddTag, onRemoveTag }) => {
@@ -10,9 +9,7 @@ const Note = ({ note, onDelete, onEdit, onColorChange, onAddTag, onRemoveTag }) 
       <Flex justifyContent="space-between">
         <Input defaultValue={note.title} isReadOnly={!note.isEditing} />
         <Flex>
-          <Button onClick={() => onEdit(note.id)} size="sm" colorScheme="teal">
-            <EditIcon />
-          </Button>
+          <IconButton onClick={() => onEdit(note.id)} size="sm" colorScheme="teal" icon={<FaEdit />} aria-label="Edit note" />
           <Button onClick={() => onDelete(note.id)} size="sm" colorScheme="red">
             <FaTrash />
           </Button>
