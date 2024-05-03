@@ -1,35 +1,84 @@
 import { useState } from 'react';
-import { Box, Button, Container, Flex, Input, Link, Text, Textarea, useColorModeValue, VStack } from '@chakra-ui/react';
-import { FaPlus, FaTrash } from 'react-icons/fa';
+import { Box, Button, Container, Flex, Input, Link, Text, Textarea, useColorModeValue, VStack, Tag, TagLabel, TagCloseButton, IconButton } from '@chakra-ui/react';
+import { FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
 
-const Note = ({ note, onDelete, onEdit }) => {
+const Note = ({ note, onDelete, onEdit, onColorChange, onAddTag, onRemoveTag }) => {
   return (
-    <Box p={4} shadow="md" borderWidth="1px" borderRadius="lg" bg={useColorModeValue('gray.100', 'gray.700')}>
+    <Box p={4} shadow="md" borderWidth="1px" borderRadius="lg" bg={note.color || useColorModeValue('gray.100', 'gray.700')}>
       <Flex justifyContent="space-between">
-        <Text fontWeight="bold">{note.title}</Text>
-        <Button onClick={() => onDelete(note.id)} size="sm" colorScheme="red">
-          <FaTrash />
-        </Button>
+        <Input defaultValue={note.title} isReadOnly={!note.isEditing} />
+        <Flex>
+          <IconButton onClick={() => onEdit(note.id)} size="sm" colorScheme="teal" icon={<FaEdit />} aria-label="Edit note" />
+          <Button onClick={() => onDelete(note.id)} size="sm" colorScheme="red">
+            <FaTrash />
+          </Button>
+        </Flex>
       </Flex>
-      <Text mt={4}>{note.content}</Text>
+      <Textarea defaultValue={note.content} isReadOnly={!note.isEditing} mt={4} />
+      <Input type="color" value={note.color} onChange={(e) => onColorChange(note.id, e.target.value)} mt={4} />
+      <Flex mt={4}>
+        {note.tags.map((tag, index) => (
+          <Tag size="lg" key={index} borderRadius="full">
+            <TagLabel>{tag}</TagLabel>
+            <TagCloseButton onClick={() => onRemoveTag(note.id, tag)} />
+          </Tag>
+        ))}
+        <Input placeholder="Add a tag" onKeyPress={(e) => onAddTag(note.id, e.target.value)} />
+      </Flex>
     </Box>
   );
 };
 
 const Index = () => {
   const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState({ title: '', content: '' });
+  const [newNote, setNewNote] = useState({ title: '', content: '', tags: [], color: '', isEditing: false });
 
   const addNote = () => {
     if (newNote.title || newNote.content) {
       const noteToAdd = { ...newNote, id: Date.now() };
       setNotes([...notes, noteToAdd]);
-      setNewNote({ title: '', content: '' });
+      setNewNote({ title: '', content: '', tags: [], color: '', isEditing: false });
     }
   };
 
   const deleteNote = (id) => {
     setNotes(notes.filter(note => note.id !== id));
+  };
+
+  const editNote = (id) => {
+    setNotes(notes.map(note => {
+      if (note.id === id) {
+        return { ...note, isEditing: !note.isEditing };
+      }
+      return note;
+    }));
+  };
+
+  const changeNoteColor = (id, color) => {
+    setNotes(notes.map(note => {
+      if (note.id === id) {
+        return { ...note, color };
+      }
+      return note;
+    }));
+  };
+
+  const addTag = (id, tag) => {
+    setNotes(notes.map(note => {
+      if (note.id === id && !note.tags.includes(tag)) {
+        return { ...note, tags: [...note.tags, tag] };
+      }
+      return note;
+    }));
+  };
+
+  const removeTag = (id, tagToRemove) => {
+    setNotes(notes.map(note => {
+      if (note.id === id) {
+        return { ...note, tags: note.tags.filter(tag => tag !== tagToRemove) };
+      }
+      return note;
+    }));
   };
 
   return (
@@ -53,7 +102,7 @@ const Index = () => {
           />
         </Box>
         {notes.map(note => (
-          <Note key={note.id} note={note} onDelete={deleteNote} onEdit={() => {}} />
+          <Note key={note.id} note={note} onDelete={deleteNote} onEdit={editNote} onColorChange={changeNoteColor} onAddTag={addTag} onRemoveTag={removeTag} />
         ))}
       </VStack>
       <Box as="footer" py={4} mt={10} textAlign="center" borderTopWidth="1px">
